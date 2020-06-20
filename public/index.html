@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>React App</title>
+  </head>
+  <body>
+    <p>We set up the web components <code>lx-token</code> and <code>lx-token-list</code> in <code>index.js</code>,
+    which give us a two-tier interlinear display with a form and a gloss. For example, see below. Here we use markup that appears
+    to be plain HTML which are in fact React components that have been wrapped into web components. If edits are made
+    to the items, then in this case, the state of the HTML elements will simply be updated, just like with a normal
+    HTML element.</p>
+
+    <div style="border: 1px black; border-radius: 5px;">
+    <pre>
+      <code>
+      &lt;lx-token-list&gt;
+        &lt;lx-token form="bonjour" gloss="hello"&gt;&lt;/lx-token&gt;
+        &lt;lx-token form="le" gloss="the"&gt;&lt;/lx-token&gt;
+        &lt;lx-token form="monde" gloss="world"&gt;&lt;/lx-token&gt;
+      &lt;/lx-token-list&gt;
+      </code>
+    </pre>
+    <lx-token-list>
+      <lx-token form="bonjour" gloss="hello"></lx-token>
+      <lx-token form="le" gloss="the"></lx-token>
+      <lx-token form="monde" gloss="world"></lx-token>
+    </lx-token-list>
+    </div>
+
+    <p>These elements can also be used with React, however. They are backed by the classes <code>Token</code> and
+    <code>TokenList</code>, which can be consumed from React code, as seen below. In this case, we want to keep
+    track of state outside of the <code>Token</code> and <code>TokenList</code> components, so whenever we make
+    edits to the data inside those components, they need to know how to tell the outside world about the changes.
+    To this end, they accept <code>onFormUpdate</code> and <code>onGlossUpdate</code> functions as props which
+    are called with the new value of the form or gloss whenever a user makes a change. Note that this kind of change
+    from within the Token components can coexist with changes made outside of them: in the example below, see how
+    the data is modified on a timeout and editing can still occur seamlessly.</p>
+
+    <code>
+      <pre>
+class DemoDataSource extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tokens: [
+        {form: 'bonjour', gloss: 'hello'},
+        {form: 'le', gloss: 'the'},
+        {form: 'monde', gloss: 'world'},
+      ]
+    }
+  }
+
+  componentDidMount() {
+    // Modify a token on an interval so we can show that the Token component
+    // will re-render if its props change, even while it is being edited
+    setInterval(() => {
+      const newTokens = [...this.state.tokens];
+      newTokens[2].form += 'e';
+      this.setState({tokens: newTokens})
+    }, 2000)
+  }
+
+  render() {
+    return (
+      <TokenList>
+        {this.state.tokens.map((token, i) => (
+          <Token
+              key={i}
+              form={token.form}
+              gloss={token.gloss}
+              onFormChange={(e) => {
+              console.log('form value:', e.target.innerText);
+              token.form = e.target.innerText;
+              console.log('tokens:', this.state.tokens);
+            }}
+            onGlossChange={(e) => {
+              console.log('form value:', e.target.innerText);
+              token.form = e.target.innerText;
+              console.log('tokens:', this.state.tokens);
+            }}
+          >
+        </Token>
+        ))}
+      </TokenList>
+    )
+  }
+}
+      </pre>
+    </code>
+
+    <div id="root"></div>
+  </body>
+</html>
