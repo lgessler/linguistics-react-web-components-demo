@@ -113,6 +113,11 @@ class DemoDataSource extends React.Component {
   }
 
   render() {
+    const modifyToken = (i, key, newVal) => {
+      const newTokens = [...this.state.tokens];
+      newTokens[i][key] = newVal;
+      this.setState({tokens: newTokens});
+    }
     return (
       <TokenList>
         {this.state.tokens.map((token, i) => (
@@ -122,12 +127,12 @@ class DemoDataSource extends React.Component {
             gloss={token.gloss}
             onFormChange={(e) => {
               console.log('form value:', e.target.innerText);
-              token.form = e.target.innerText;
+              modifyToken(i, 'form', e.target.innerText);
               console.log('tokens:', this.state.tokens);
             }}
             onGlossChange={(e) => {
-              console.log('form value:', e.target.innerText);
-              token.form = e.target.innerText;
+              console.log('gloss value:', e.target.innerText);
+              modifyToken(i, 'gloss', e.target.innerText);
               console.log('tokens:', this.state.tokens);
             }}
           >
